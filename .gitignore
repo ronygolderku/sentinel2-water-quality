@@ -24,11 +24,15 @@ env/
 .DS_Store
 Thumbs.db
 
-# # Project data directories (large files)
-# 03_raw_data/
-# 04_processed_data/
-# 05_final_products/
-# 06_logs/
+# Project data directories (keep folders, ignore contents)
+03_raw_data/*
+!03_raw_data/.gitkeep
+04_processed_data/*
+!04_processed_data/.gitkeep
+05_final_products/*
+!05_final_products/.gitkeep
+06_logs/*
+!06_logs/.gitkeep
 
 # Credentials and config (security)
 **/parameters.yaml
