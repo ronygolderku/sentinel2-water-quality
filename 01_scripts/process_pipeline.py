@@ -8,6 +8,7 @@ import sys
 import argparse
 import logging
 import subprocess
+import re
 from pathlib import Path
 from datetime import datetime
 import json
@@ -68,6 +69,33 @@ class WaterQualityProcessor:
             logger.error(f"Exception in {description}: {e}")
             return False
     
+    def extract_date_from_filename(self, filename):
+        """Extract date from filename in various formats."""
+        # Handle different filename formats
+        parts = filename.split('_')
+        
+        # Look for date in format YYYYMMDDTHHMMSS
+        for part in parts:
+            if 'T' in part and len(part) == 15:  # YYYYMMDDTHHMMSS format
+                return part[:8]  # Extract YYYYMMDD
+        
+        # Look for date in format YYYYMMDD
+        for part in parts:
+            if len(part) == 8 and part.isdigit():  # YYYYMMDD format
+                return part
+        
+        # Try to find date pattern in the whole filename
+        match = re.search(r'(\d{8})T\d{6}', filename)
+        if match:
+            return match.group(1)
+        
+        match = re.search(r'(\d{8})', filename)
+        if match:
+            return match.group(1)
+        
+        logger.warning(f"Could not extract date from filename: {filename}")
+        return None
+
     def step_1_resample_subset(self):
         """Step 1: Resample and subset the data."""
         logger.info("=" * 50)
@@ -164,7 +192,10 @@ class WaterQualityProcessor:
             
             # Extract date from filename
             filename = dim_file.stem
-            date_part = filename.split('_')[4]  # Extract date part
+            date_part = self.extract_date_from_filename(filename)
+            
+            if not date_part:
+                continue
             
             # Format date as YYYYMMDD
             output_name = f"{date_part}.png"
@@ -182,7 +213,8 @@ class WaterQualityProcessor:
                 generated_files = list(output_dir.glob("*.png"))
                 if generated_files:
                     latest_file = max(generated_files, key=lambda p: p.stat().st_mtime)
-                    latest_file.rename(output_file)
+                    if latest_file.name != output_name:
+                        latest_file.rename(output_file)
                     success_count += 1
         
         logger.info(f"Step 3 completed: {success_count}/{total_count} files processed successfully")
@@ -207,8 +239,15 @@ class WaterQualityProcessor:
         for dim_file in self.dirs['l2a_reprojected'].glob("*.dim"):
             total_count += 1
             
-            # Create output filename
-            output_file = self.dirs['c2rcc_output'] / f"{dim_file.stem}_C2RCC.nc"
+            # Extract date from filename
+            filename = dim_file.stem
+            date_part = self.extract_date_from_filename(filename)
+            
+            if not date_part:
+                continue
+            
+            # Create output filename with date
+            output_file = self.dirs['c2rcc_output'] / f"Subset_S2_MSIL2A_{date_part}_C2RCC.nc"
             
             if output_file.exists():
                 logger.info(f"Output already exists: {output_file.name}")
@@ -244,9 +283,12 @@ class WaterQualityProcessor:
             
             # Extract date from filename
             filename = nc_file.stem
-            date_part = filename.split('_')[4]  # Extract date part
+            date_part = self.extract_date_from_filename(filename)
             
-            output_file = self.dirs['cdom_output'] / f"Subset_S2_MSIL2A_{date_part}.nc"
+            if not date_part:
+                continue
+            
+            output_file = self.dirs['cdom_output'] / f"Subset_S2_MSIL2A_{date_part}_CDOM.nc"
             
             if output_file.exists():
                 logger.info(f"Output already exists: {output_file.name}")
