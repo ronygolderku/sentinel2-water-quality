@@ -1,0 +1,30 @@
+<parameters>
+    <validPixelExpression>B8 &gt; 0 &amp;&amp; B8 &lt; 0.1</validPixelExpression>
+    <salinity>35.0</salinity>
+    <temperature>30.0</temperature>
+    <ozone>330.0</ozone>
+    <press>1000.0</press>
+    <elevation>20.0</elevation>
+    <TSMfac>1.06</TSMfac>
+    <TSMexp>0.942</TSMexp>
+    <CHLexp>1.04</CHLexp>
+    <CHLfac>21.0</CHLfac>
+    <thresholdRtosaOOS>0.05</thresholdRtosaOOS>
+    <thresholdAcReflecOos>0.1</thresholdAcReflecOos>
+    <thresholdCloudTDown865>0.955</thresholdCloudTDown865>
+    <netSet>C2RCC-Nets</netSet>
+    <outputAsRrs>false</outputAsRrs>
+    <deriveRwFromPathAndTransmittance>false</deriveRwFromPathAndTransmittance>
+    <useEcmwfAuxData>false</useEcmwfAuxData>
+    <outputRtoa>false</outputRtoa>
+    <outputRtosaGc>false</outputRtosaGc>
+    <outputRtosaGcAann>false</outputRtosaGcAann>
+    <outputRpath>false</outputRpath>
+    <outputTdown>false</outputTdown>
+    <outputTup>false</outputTup>
+    <outputAcReflectance>false</outputAcReflectance>
+    <outputRhown>true</outputRhown>
+    <outputOos>false</outputOos>
+    <outputKd>true</outputKd>
+    <outputUncertainties>true</outputUncertainties>
+</parameters>

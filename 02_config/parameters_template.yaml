@@ -1,0 +1,67 @@
+# Sentinel-2 Water Quality Processing Configuration Template
+# Copy this file to parameters.yaml and update with your settings
+
+# Study Area Configuration
+study_area:
+  name: "Your Study Area Name"
+  wkt_geometry: "POLYGON ((115.53949386146294 -31.925260296569277, 115.78672226811288 -31.92786249897796, 115.78223830220871 -32.26641419173019, 115.53409693090781 -32.2637777945036, 115.53949386146294 -31.925260296569277))"
+  subset_geometry: "POLYGON ((115.40 -31.95, 115.80 -31.95, 115.80 -32.30, 115.80 -32.30, 115.40 -31.95, 115.40 -31.95))"
+  epsg_code: 4326
+
+# Data Download Configuration
+download:
+  copernicus_user: "your_username@email.com"  # Replace with your Copernicus credentials
+  copernicus_password: "your_password"        # Replace with your Copernicus credentials
+  data_collection: "SENTINEL-2"
+  product_type: "L1C"
+  cloud_cover_threshold: 10
+  default_start_date: "2025-05-01"
+  default_end_date: "2025-06-30"
+
+# Processing Parameters
+processing:
+  target_resolution: 10  # meters
+  target_crs: "EPSG:4326"
+  subset_to_study_area: true
+  
+# L2A Processing
+l2a:
+  atmospheric_correction: true
+  cirrus_correction: true
+  
+# C2RCC Parameters
+c2rcc:
+  atmospheric_correction: true
+  derive_rwn: true
+  output_uncertainties: true
+  salinity: 35.0
+  temperature: 15.0
+  ozone: 330.0
+  press: 1013.25
+  
+# Output Parameters
+output:
+  create_rgb: true
+  create_water_quality_maps: true
+  output_format: "NetCDF"
+  create_png_outputs: true
+  
+# Visualization Parameters
+visualization:
+  dpi: 300
+  figure_size: [12, 8]
+  colormap_chl: "viridis"
+  colormap_tsm: "plasma"
+  colormap_cdom: "inferno"
+  
+# Quality Control
+quality_control:
+  mask_clouds: true
+  mask_land: true
+  mask_invalid_pixels: true
+  
+# File Management
+file_management:
+  keep_intermediate_files: false
+  compress_outputs: true
+  cleanup_raw_data: false

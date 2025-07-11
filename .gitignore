@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.Python
+build/
+dist/
+*.egg
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project data directories (large files)
+03_raw_data/
+04_processed_data/
+05_final_products/
+06_logs/
+
+# Credentials and config (security)
+**/parameters.yaml
+!**/parameters_template.yaml
+
+# Data files
+*.nc
+*.nc4
+*.zip
+*.tar.gz
+*.tif
+*.tiff
+*.dim
+*.data/
+
+# Jupyter notebooks (outputs)
+*.ipynb_checkpoints/
+
+# Documentation build
+docs/_build/
+docs/_static/
+docs/_templates/
