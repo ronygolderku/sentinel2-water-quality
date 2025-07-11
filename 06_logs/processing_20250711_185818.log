@@ -1,0 +1,62 @@
+2025-07-11 18:58:18,452 - process_pipeline - INFO - Processing started. Log file: D:\Sentinel2_WQ\06_logs\processing_20250711_185818.log
+2025-07-11 18:58:18,452 - process_pipeline - INFO - Starting complete Sentinel-2 water quality processing pipeline
+2025-07-11 18:58:18,453 - process_pipeline - INFO - Starting step: Resample and Subset
+2025-07-11 18:58:18,453 - process_pipeline - INFO - ==================================================
+2025-07-11 18:58:18,453 - process_pipeline - INFO - STEP 1: Resample and Subset
+2025-07-11 18:58:18,453 - process_pipeline - INFO - ==================================================
+2025-07-11 18:58:18,454 - process_pipeline - INFO - Starting: Resample and subset S2C_MSIL1C_20250515T021231_N0511_R060_T50HLK_20250515T055523.SAFE.zip
+2025-07-11 19:06:07,921 - process_pipeline - INFO - Completed: Resample and subset S2C_MSIL1C_20250515T021231_N0511_R060_T50HLK_20250515T055523.SAFE.zip
+2025-07-11 19:06:07,925 - process_pipeline - INFO - Step 1 completed: 1/1 files processed successfully
+2025-07-11 19:06:07,926 - process_pipeline - INFO - Step completed successfully: Resample and Subset
+2025-07-11 19:06:07,926 - process_pipeline - INFO - Starting step: Reproject to WGS84
+2025-07-11 19:06:07,926 - process_pipeline - INFO - ==================================================
+2025-07-11 19:06:07,926 - process_pipeline - INFO - STEP 2: Reproject to WGS84
+2025-07-11 19:06:07,926 - process_pipeline - INFO - ==================================================
+2025-07-11 19:06:07,931 - process_pipeline - INFO - Starting: Reproject Subset_S2_MSIL2A_20250515T021231.dim
+2025-07-11 19:15:56,762 - process_pipeline - INFO - Completed: Reproject Subset_S2_MSIL2A_20250515T021231.dim
+2025-07-11 19:15:56,762 - process_pipeline - INFO - Step 2 completed: 1/1 files processed successfully
+2025-07-11 19:15:56,762 - process_pipeline - INFO - Step completed successfully: Reproject to WGS84
+2025-07-11 19:15:56,762 - process_pipeline - INFO - Starting step: Generate True Color
+2025-07-11 19:15:56,764 - process_pipeline - INFO - ==================================================
+2025-07-11 19:15:56,764 - process_pipeline - INFO - STEP 3: Generate True Color Images
+2025-07-11 19:15:56,764 - process_pipeline - INFO - ==================================================
+2025-07-11 19:15:57,267 - process_pipeline - INFO - Starting: Generate true color for Subset_S2_MSIL2A_20250515T021231_reprojected.dim
+2025-07-11 19:16:49,273 - process_pipeline - INFO - Completed: Generate true color for Subset_S2_MSIL2A_20250515T021231_reprojected.dim
+2025-07-11 19:16:49,277 - process_pipeline - INFO - Step 3 completed: 1/1 files processed successfully
+2025-07-11 19:16:49,277 - process_pipeline - INFO - Step completed successfully: Generate True Color
+2025-07-11 19:16:49,278 - process_pipeline - INFO - Starting step: C2RCC Processing
+2025-07-11 19:16:49,278 - process_pipeline - INFO - ==================================================
+2025-07-11 19:16:49,278 - process_pipeline - INFO - STEP 4: C2RCC Processing
+2025-07-11 19:16:49,278 - process_pipeline - INFO - ==================================================
+2025-07-11 19:16:49,281 - process_pipeline - INFO - Starting: C2RCC processing Subset_S2_MSIL2A_20250515T021231_reprojected.dim
+2025-07-11 19:29:33,345 - process_pipeline - INFO - Completed: C2RCC processing Subset_S2_MSIL2A_20250515T021231_reprojected.dim
+2025-07-11 19:29:33,345 - process_pipeline - INFO - Step 4 completed: 1/1 files processed successfully
+2025-07-11 19:29:33,346 - process_pipeline - INFO - Step completed successfully: C2RCC Processing
+2025-07-11 19:29:33,346 - process_pipeline - INFO - Starting step: CDOM Calculation
+2025-07-11 19:29:33,347 - process_pipeline - INFO - ==================================================
+2025-07-11 19:29:33,347 - process_pipeline - INFO - STEP 5: CDOM Calculation
+2025-07-11 19:29:33,347 - process_pipeline - INFO - ==================================================
+2025-07-11 19:29:33,353 - process_pipeline - INFO - Starting: CDOM calculation Subset_S2_MSIL2A_20250515T021231_reprojected_C2RCC.nc
+2025-07-11 19:29:39,352 - process_pipeline - INFO - Completed: CDOM calculation Subset_S2_MSIL2A_20250515T021231_reprojected_C2RCC.nc
+2025-07-11 19:29:39,352 - process_pipeline - INFO - Step 5 completed: 1/1 files processed successfully
+2025-07-11 19:29:39,352 - process_pipeline - INFO - Step completed successfully: CDOM Calculation
+2025-07-11 19:29:39,352 - process_pipeline - INFO - Starting step: Generate Plots
+2025-07-11 19:29:39,354 - process_pipeline - INFO - ==================================================
+2025-07-11 19:29:39,354 - process_pipeline - INFO - STEP 6: Generate Final Plots
+2025-07-11 19:29:39,354 - process_pipeline - INFO - ==================================================
+2025-07-11 19:29:54,543 - process_pipeline - INFO - Plotting completed successfully
+2025-07-11 19:29:54,544 - process_pipeline - INFO - Step completed successfully: Generate Plots
+2025-07-11 19:29:54,545 - process_pipeline - INFO - ==================================================
+2025-07-11 19:29:54,545 - process_pipeline - INFO - PROCESSING SUMMARY
+2025-07-11 19:29:54,545 - process_pipeline - INFO - ==================================================
+2025-07-11 19:29:54,545 - process_pipeline - INFO - Start time: 2025-07-11 18:58:18.453127
+2025-07-11 19:29:54,545 - process_pipeline - INFO - End time: 2025-07-11 19:29:54.544554
+2025-07-11 19:29:54,546 - process_pipeline - INFO - Duration: 0:31:36.091427
+2025-07-11 19:29:54,546 - process_pipeline - INFO - 
+2025-07-11 19:29:54,546 - process_pipeline - INFO - Resample and Subset: SUCCESS
+2025-07-11 19:29:54,546 - process_pipeline - INFO - Reproject to WGS84: SUCCESS
+2025-07-11 19:29:54,547 - process_pipeline - INFO - Generate True Color: SUCCESS
+2025-07-11 19:29:54,547 - process_pipeline - INFO - C2RCC Processing: SUCCESS
+2025-07-11 19:29:54,547 - process_pipeline - INFO - CDOM Calculation: SUCCESS
+2025-07-11 19:29:54,547 - process_pipeline - INFO - Generate Plots: SUCCESS
+2025-07-11 19:29:54,547 - process_pipeline - INFO - Overall status: SUCCESS

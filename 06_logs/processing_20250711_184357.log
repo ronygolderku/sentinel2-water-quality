@@ -1,0 +1,65 @@
+2025-07-11 18:43:57,581 - process_pipeline - INFO - Processing started. Log file: D:\Sentinel2_WQ\06_logs\processing_20250711_184357.log
+2025-07-11 18:43:57,581 - process_pipeline - INFO - Starting complete Sentinel-2 water quality processing pipeline
+2025-07-11 18:43:57,582 - process_pipeline - INFO - Starting step: Resample and Subset
+2025-07-11 18:43:57,582 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,582 - process_pipeline - INFO - STEP 1: Resample and Subset
+2025-07-11 18:43:57,582 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,582 - process_pipeline - INFO - Step 1 completed: 0/0 files processed successfully
+2025-07-11 18:43:57,593 - process_pipeline - INFO - Step completed successfully: Resample and Subset
+2025-07-11 18:43:57,593 - process_pipeline - INFO - Starting step: Reproject to WGS84
+2025-07-11 18:43:57,593 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,593 - process_pipeline - INFO - STEP 2: Reproject to WGS84
+2025-07-11 18:43:57,593 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,594 - process_pipeline - INFO - Step 2 completed: 0/0 files processed successfully
+2025-07-11 18:43:57,594 - process_pipeline - INFO - Step completed successfully: Reproject to WGS84
+2025-07-11 18:43:57,594 - process_pipeline - INFO - Starting step: Generate True Color
+2025-07-11 18:43:57,594 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,595 - process_pipeline - INFO - STEP 3: Generate True Color Images
+2025-07-11 18:43:57,595 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,596 - process_pipeline - INFO - Step 3 completed: 0/0 files processed successfully
+2025-07-11 18:43:57,596 - process_pipeline - INFO - Step completed successfully: Generate True Color
+2025-07-11 18:43:57,596 - process_pipeline - INFO - Starting step: C2RCC Processing
+2025-07-11 18:43:57,596 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,596 - process_pipeline - INFO - STEP 4: C2RCC Processing
+2025-07-11 18:43:57,596 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,597 - process_pipeline - INFO - Step 4 completed: 0/0 files processed successfully
+2025-07-11 18:43:57,597 - process_pipeline - INFO - Step completed successfully: C2RCC Processing
+2025-07-11 18:43:57,597 - process_pipeline - INFO - Starting step: CDOM Calculation
+2025-07-11 18:43:57,597 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,597 - process_pipeline - INFO - STEP 5: CDOM Calculation
+2025-07-11 18:43:57,597 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,597 - process_pipeline - INFO - Step 5 completed: 0/0 files processed successfully
+2025-07-11 18:43:57,599 - process_pipeline - INFO - Step completed successfully: CDOM Calculation
+2025-07-11 18:43:57,599 - process_pipeline - INFO - Starting step: Generate Plots
+2025-07-11 18:43:57,599 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:57,599 - process_pipeline - INFO - STEP 6: Generate Final Plots
+2025-07-11 18:43:57,599 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:58,755 - process_pipeline - ERROR - Plotting failed: 2025-07-11 18:43:58,619 - INFO - Starting plot generation for all water quality parameters
+2025-07-11 18:43:58,619 - INFO - Generating Chlorophyll-a plots
+2025-07-11 18:43:58,619 - INFO - Chlorophyll plots: 0 files processed
+2025-07-11 18:43:58,619 - INFO - Generating TSM plots
+2025-07-11 18:43:58,619 - INFO - TSM plots: 0 files processed
+2025-07-11 18:43:58,619 - INFO - Generating CDOM plots
+2025-07-11 18:43:58,619 - INFO - CDOM plots: 0 files processed
+2025-07-11 18:43:58,619 - INFO - Plot generation summary:
+2025-07-11 18:43:58,619 - INFO - chlorophyll: 0 plots generated
+2025-07-11 18:43:58,619 - INFO - tsm: 0 plots generated
+2025-07-11 18:43:58,619 - INFO - cdom: 0 plots generated
+2025-07-11 18:43:58,619 - INFO - Total plots generated: 0
+
+2025-07-11 18:43:58,756 - process_pipeline - ERROR - Step failed: Generate Plots
+2025-07-11 18:43:58,756 - process_pipeline - ERROR - Pipeline stopped due to failure
+2025-07-11 18:43:58,756 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:58,756 - process_pipeline - INFO - PROCESSING SUMMARY
+2025-07-11 18:43:58,756 - process_pipeline - INFO - ==================================================
+2025-07-11 18:43:58,756 - process_pipeline - INFO - Start time: 2025-07-11 18:43:57.582258
+2025-07-11 18:43:58,757 - process_pipeline - INFO - End time: 2025-07-11 18:43:58.756135
+2025-07-11 18:43:58,757 - process_pipeline - INFO - Duration: 0:00:01.173877
+2025-07-11 18:43:58,757 - process_pipeline - INFO - 
+2025-07-11 18:43:58,757 - process_pipeline - INFO - Resample and Subset: SUCCESS
+2025-07-11 18:43:58,757 - process_pipeline - INFO - Reproject to WGS84: SUCCESS
+2025-07-11 18:43:58,757 - process_pipeline - INFO - Generate True Color: SUCCESS
+2025-07-11 18:43:58,758 - process_pipeline - INFO - C2RCC Processing: SUCCESS
+2025-07-11 18:43:58,758 - process_pipeline - INFO - CDOM Calculation: SUCCESS
+2025-07-11 18:43:58,758 - process_pipeline - INFO - Generate Plots: FAILED
+2025-07-11 18:43:58,758 - process_pipeline - INFO - Overall status: FAILED

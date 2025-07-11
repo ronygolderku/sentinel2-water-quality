@@ -1,0 +1,19 @@
+2025-07-10 23:29:22,012 - process_pipeline - INFO - Processing started. Log file: D:\Sentinel2_WQ\06_logs\processing_20250710_232922.log
+2025-07-10 23:29:22,012 - process_pipeline - INFO - Starting complete Sentinel-2 water quality processing pipeline
+2025-07-10 23:29:22,012 - process_pipeline - INFO - Starting step: Resample and Subset
+2025-07-10 23:29:22,012 - process_pipeline - INFO - ==================================================
+2025-07-10 23:29:22,012 - process_pipeline - INFO - STEP 1: Resample and Subset
+2025-07-10 23:29:22,013 - process_pipeline - INFO - ==================================================
+2025-07-10 23:29:22,013 - process_pipeline - INFO - Starting: Resample and subset S2B_MSIL1C_20250520T021209_N0511_R060_T50HLK_20250520T052113.SAFE.zip
+2025-07-10 23:36:56,229 - process_pipeline - INFO - Completed: Resample and subset S2B_MSIL1C_20250520T021209_N0511_R060_T50HLK_20250520T052113.SAFE.zip
+2025-07-10 23:36:56,246 - process_pipeline - INFO - Starting: Resample and subset S2C_MSIL1C_20250515T021231_N0511_R060_T50HLK_20250515T055523.SAFE.zip
+2025-07-10 23:44:37,599 - process_pipeline - INFO - Completed: Resample and subset S2C_MSIL1C_20250515T021231_N0511_R060_T50HLK_20250515T055523.SAFE.zip
+2025-07-10 23:44:37,602 - process_pipeline - INFO - Step 1 completed: 2/2 files processed successfully
+2025-07-10 23:44:37,606 - process_pipeline - INFO - Step completed successfully: Resample and Subset
+2025-07-10 23:44:37,607 - process_pipeline - INFO - Starting step: Reproject to WGS84
+2025-07-10 23:44:37,608 - process_pipeline - INFO - ==================================================
+2025-07-10 23:44:37,608 - process_pipeline - INFO - STEP 2: Reproject to WGS84
+2025-07-10 23:44:37,608 - process_pipeline - INFO - ==================================================
+2025-07-10 23:44:37,976 - process_pipeline - INFO - Starting: Reproject Subset_S2_MSIL2A_20250515T021231.dim
+2025-07-10 23:57:54,844 - process_pipeline - INFO - Completed: Reproject Subset_S2_MSIL2A_20250515T021231.dim
+2025-07-10 23:57:54,845 - process_pipeline - INFO - Starting: Reproject Subset_S2_MSIL2A_20250520T021209.dim
