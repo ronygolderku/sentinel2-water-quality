@@ -17,13 +17,17 @@ A comprehensive, automated toolkit for processing Sentinel-2 satellite imagery t
 
 ## Features
 
-- **Automated Data Download** from Copernicus Data Space Ecosystem
-- **Complete Processing Pipeline** using SNAP and C2RCC algorithms
-- **Water Quality Parameter Extraction** (CHL, TSM, CDOM)
-- **Automated Visualization** with publication-ready plots
-- **Professional Directory Structure** with organized outputs
-- **Comprehensive Error Handling** and logging
-- **Easy Configuration** via YAML files
+- **🎯 Study-Area Agnostic** - Update WKT geometry once, all SNAP XML files update automatically
+- **🗺️ Intelligent Multi-tile Processing** - Automatically detects single vs multi-tile coverage:
+  - Single-tile: Skips mosaic, saves ~30-50% disk space
+  - Multi-tile: Automatically creates mosaics for seamless coverage
+- **⚙️ Automated Data Download** from Copernicus Data Space Ecosystem
+- **🔄 Complete Processing Pipeline** using SNAP and C2RCC algorithms
+- **💧 Water Quality Parameter Extraction** (CHL, TSM, CDOM)
+- **📊 Automated Visualization** with publication-ready plots
+- **📁 Professional Directory Structure** with organized outputs
+- **🛡️ Comprehensive Error Handling** and logging
+- **⚡ Easy Configuration** via YAML files (no XML editing needed!)
 
 ## Quick Links
 

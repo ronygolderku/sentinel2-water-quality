@@ -120,9 +120,27 @@ python run_workflow.py --action full --clean --start-date 2025-05-15 --end-date 
 
 ## Expected Processing Time
 
+### Single-Tile Processing
 - **Download**: 2-10 minutes per scene
-- **Processing**: 10-30 minutes per scene
+- **Processing**: 5-15 minutes per scene (no mosaic required)
 - **Plotting**: 1-5 minutes per scene
+- **Total**: ~30% faster than multi-tile
+
+**Disk Space**: ~2-3GB per scene
+
+### Multi-Tile Processing
+- **Download**: 5-20 minutes per date (multiple tiles)
+- **Processing**: 10-30 minutes per date (includes mosaic)
+- **Plotting**: 1-5 minutes per date
+
+**Disk Space**: ~3-5GB per date (more tiles = more space)
+
+### Automatic Detection
+The workflow **automatically detects** whether your study area needs:
+- ✅ **Single-tile processing** (faster, less disk space)
+- ✅ **Multi-tile processing** (seamless coverage, automatic mosaicing)
+
+No configuration needed - it just works!
 
 *Times depend on your internet speed, system performance, and scene size.*
 
