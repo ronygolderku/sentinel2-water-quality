@@ -24,6 +24,19 @@ class WaterQualityProcessor:
         self.base_dir = Path(__file__).parent.parent
         self.setup_directories()
         self.setup_logging()
+        self.update_snap_geometry()
+
+    def update_snap_geometry(self):
+        """Update SNAP XML files with geometry from configuration."""
+        try:
+            from update_snap_geometry import update_all_snap_geometries
+            logger.info("Updating SNAP geometry files from study area configuration...")
+            if update_all_snap_geometries(self.config_file):
+                logger.info("SNAP geometry files updated successfully")
+            else:
+                logger.warning("Failed to update SNAP geometry files")
+        except Exception as e:
+            logger.warning(f"Could not update SNAP geometry files: {e}")
         
     def setup_directories(self):
         """Setup working directories."""
@@ -32,6 +45,7 @@ class WaterQualityProcessor:
             'l2a_resampled': self.base_dir / "04_processed_data/l2a_resampled",
             'l2a_reprojected': self.base_dir / "04_processed_data/l2a_reprojected", 
             'c2rcc_output': self.base_dir / "04_processed_data/c2rcc_output",
+            'mosaic_output': self.base_dir / "04_processed_data/mosaic_output",
             'cdom_output': self.base_dir / "04_processed_data/cdom_output",
             'final_products': self.base_dir / "05_final_products",
             'logs': self.base_dir / "06_logs",
@@ -95,7 +109,23 @@ class WaterQualityProcessor:
         
         logger.warning(f"Could not extract date from filename: {filename}")
         return None
-
+    
+    def extract_block_name_from_filename(self, filename):
+        """Extract block name (tile ID) from filename.
+        
+        Example: S2A_MSIL1C_20150903T014036_N0500_R031_T52LFL_20231017T130149.zip
+        Extracts: T52LFL
+        """
+        parts = filename.split('_')
+        
+        # Look for tile ID pattern (T followed by 5 characters)
+        for part in parts:
+            if part.startswith('T') and len(part) == 6:
+                return part
+        
+        logger.warning(f"Could not extract block name from filename: {filename}")
+        return None
+    
     def step_1_resample_subset(self):
         """Step 1: Resample and subset the data."""
         logger.info("=" * 50)
@@ -115,11 +145,16 @@ class WaterQualityProcessor:
         for zip_file in self.dirs['raw_data'].glob("*.zip"):
             total_count += 1
             
-            # Extract date from filename
+            # Extract date and block name from filename
             filename = zip_file.stem
-            date_part = filename.split('_')[2]  # Extract date part
+            date_part = self.extract_date_from_filename(filename)
+            block_name = self.extract_block_name_from_filename(filename)
             
-            output_file = self.dirs['l2a_resampled'] / f"Subset_S2_MSIL2A_{date_part}.dim"
+            if not date_part or not block_name:
+                logger.warning(f"Could not extract date or block name from {zip_file.name}, skipping")
+                continue
+            
+            output_file = self.dirs['l2a_resampled'] / f"Subset_S2_MSIL2A_{date_part}_{block_name}.dim"
             
             if output_file.exists():
                 logger.info(f"Output already exists: {output_file.name}")
@@ -170,44 +205,44 @@ class WaterQualityProcessor:
         return success_count == total_count
     
     def step_3_true_color(self):
-        """Step 3: Generate true color images."""
+        """Step 3: Generate true color images from reprojected data."""
         logger.info("=" * 50)
         logger.info("STEP 3: Generate True Color Images")
         logger.info("=" * 50)
-        
+
         rgb_profile = self.dirs['config'] / "snap_graphs/rgb_profile_s2.rgb"
         output_dir = self.dirs['final_products'] / "true_color"
         output_dir.mkdir(exist_ok=True)
-        
+
         if not rgb_profile.exists():
             logger.error(f"RGB profile not found: {rgb_profile}")
             return False
-        
+
         success_count = 0
         total_count = 0
-        
+
         # Process each reprojected DIM file
         for dim_file in self.dirs['l2a_reprojected'].glob("*.dim"):
             total_count += 1
-            
+
             # Extract date from filename
             filename = dim_file.stem
             date_part = self.extract_date_from_filename(filename)
-            
+
             if not date_part:
                 continue
-            
+
             # Format date as YYYYMMDD
             output_name = f"{date_part}.png"
             output_file = output_dir / output_name
-            
+
             if output_file.exists():
                 logger.info(f"Output already exists: {output_name}")
                 success_count += 1
                 continue
-            
+
             command = f'pconvert -f png -p "{rgb_profile}" -o "{output_dir}" "{dim_file}"'
-            
+
             if self.run_gpt_command(command, f"Generate true color for {dim_file.name}"):
                 # Rename the generated file to the desired format
                 generated_files = list(output_dir.glob("*.png"))
@@ -216,7 +251,7 @@ class WaterQualityProcessor:
                     if latest_file.name != output_name:
                         latest_file.rename(output_file)
                     success_count += 1
-        
+
         logger.info(f"Step 3 completed: {success_count}/{total_count} files processed successfully")
         return success_count == total_count
     
@@ -239,15 +274,17 @@ class WaterQualityProcessor:
         for dim_file in self.dirs['l2a_reprojected'].glob("*.dim"):
             total_count += 1
             
-            # Extract date from filename
+            # Extract date and block name from filename
             filename = dim_file.stem
             date_part = self.extract_date_from_filename(filename)
+            block_name = self.extract_block_name_from_filename(filename)
             
-            if not date_part:
+            if not date_part or not block_name:
+                logger.warning(f"Could not extract date or block name from {dim_file.name}, skipping")
                 continue
             
-            # Create output filename with date
-            output_file = self.dirs['c2rcc_output'] / f"Subset_S2_MSIL2A_{date_part}_C2RCC.nc"
+            # Create output filename with date and block name
+            output_file = self.dirs['c2rcc_output'] / f"Subset_S2_MSIL2A_{date_part}_{block_name}_C2RCC.nc"
             
             if output_file.exists():
                 logger.info(f"Output already exists: {output_file.name}")
@@ -261,49 +298,184 @@ class WaterQualityProcessor:
         
         logger.info(f"Step 4 completed: {success_count}/{total_count} files processed successfully")
         return success_count == total_count
+
+
+    def get_tiles_by_date(self):
+        """Group C2RCC files by date and count tiles per date.
+
+        Returns a dict with structure:
+        {
+            'date': {
+                'single': [list of files for single tile],
+                'multiple': [list of files for multiple tiles]
+            }
+        }
+        """
+        from collections import defaultdict
+        c2rcc_files = list(self.dirs['c2rcc_output'].glob("*.nc"))
+
+        if not c2rcc_files:
+            logger.warning("No C2RCC files found")
+            return {}
+
+        files_by_date = defaultdict(list)
+
+        for nc_file in c2rcc_files:
+            filename = nc_file.stem
+            date_part = self.extract_date_from_filename(filename)
+
+            if date_part:
+                files_by_date[date_part].append(nc_file)
+
+        # Categorize by single vs multiple tiles
+        result = {}
+        for date_part, files in files_by_date.items():
+            result[date_part] = {
+                'single': files if len(files) == 1 else [],
+                'multiple': files if len(files) > 1 else []
+            }
+
+        return result
+
+    def step_5_mosaic(self):
+        """Step 5: Create mosaic from multiple tiles (if needed)."""
+        logger.info("=" * 50)
+        logger.info("STEP 5: Mosaic Processing (if multiple tiles)")
+        logger.info("=" * 50)
+
+        param_file = self.dirs['config'] / "snap_graphs/mosaic.xml"
+
+        if not param_file.exists():
+            logger.error(f"Parameter file not found: {param_file}")
+            return False
+
+        tiles_by_date = self.get_tiles_by_date()
+
+        if not tiles_by_date:
+            logger.info("No C2RCC files found for processing - skipping mosaic step")
+            return True  # Not an error, just no data to process
+
+        success_count = 0
+        total_count = 0
+        single_tile_count = 0
+
+        # Process each date
+        for date_part, tile_info in tiles_by_date.items():
+            multiple_files = tile_info['multiple']
+            single_files = tile_info['single']
+
+            # Count single tile dates
+            if single_files:
+                single_tile_count += 1
+                logger.info(f"{date_part}: Single tile detected - mosaic not needed")
+                continue
+
+            # Process only dates with multiple tiles
+            if len(multiple_files) < 2:
+                continue
+
+            total_count += 1
+
+            # Sort files for consistent ordering
+            multiple_files.sort()
+
+            # Create mosaic output directory if needed
+            mosaic_output_file = self.dirs['mosaic_output'] / f"Mosaic_S2_MSIL2A_{date_part}.nc"
+
+            if mosaic_output_file.exists():
+                logger.info(f"Mosaic already exists: {mosaic_output_file.name}")
+                success_count += 1
+                continue
+
+            # Build source files string for gpt command
+            source_files = " ".join([f'"{str(f)}"' for f in multiple_files])
+
+            # Build mosaic command using XML parameter file
+            command = f'gpt Mosaic {source_files} -p "{param_file}" -t "{mosaic_output_file}" -f NetCDF4-BEAM'
+
+            logger.info(f"Creating mosaic for {date_part} from {len(multiple_files)} tiles")
+            logger.info(f"Input files: {[f.name for f in multiple_files]}")
+
+            if self.run_gpt_command(command, f"Mosaic processing for {date_part}"):
+                success_count += 1
+
+        if single_tile_count > 0:
+            logger.info(f"Single-tile dates found: {single_tile_count} (mosaic processing skipped)")
+
+        if total_count == 0:
+            logger.info("No dates with multiple tiles found for mosaicking")
+            return True  # Not an error, single tiles only
+
+        logger.info(f"Step 5 completed: {success_count}/{total_count} mosaics created successfully")
+        return success_count == total_count
     
-    def step_5_cdom_calculation(self):
-        """Step 5: Calculate CDOM."""
+    def step_6_cdom_calculation(self):
+        """Step 6: Calculate CDOM from both single-tile and mosaicked data."""
         logger.info("=" * 50)
-        logger.info("STEP 5: CDOM Calculation")
+        logger.info("STEP 6: CDOM Calculation")
         logger.info("=" * 50)
-        
+
         graph_file = self.dirs['config'] / "snap_graphs/cdom_band_math.xml"
-        
+
         if not graph_file.exists():
             logger.error(f"Graph file not found: {graph_file}")
             return False
-        
+
         success_count = 0
         total_count = 0
-        
-        # Process each C2RCC output file
-        for nc_file in self.dirs['c2rcc_output'].glob("*.nc"):
-            total_count += 1
-            
-            # Extract date from filename
-            filename = nc_file.stem
-            date_part = self.extract_date_from_filename(filename)
-            
-            if not date_part:
+
+        # Get tile information to know which source to use
+        tiles_by_date = self.get_tiles_by_date()
+
+        if not tiles_by_date:
+            logger.info("No C2RCC files found for CDOM calculation - skipping step")
+            return True  # Not an error, just no data to process
+
+        # Process each date
+        for date_part, tile_info in tiles_by_date.items():
+            single_files = tile_info['single']
+            multiple_files = tile_info['multiple']
+
+            # Determine source file (mosaic for multiple tiles, c2rcc for single tile)
+            if multiple_files:
+                # Use mosaic output
+                mosaic_file = self.dirs['mosaic_output'] / f"Mosaic_S2_MSIL2A_{date_part}.nc"
+                if not mosaic_file.exists():
+                    logger.warning(f"Mosaic file not found for {date_part}, skipping CDOM")
+                    continue
+                source_file = mosaic_file
+                source_type = "mosaic"
+            elif single_files:
+                # Use c2rcc output (single tile)
+                source_file = single_files[0]
+                source_type = "c2rcc"
+            else:
+                logger.warning(f"No source files found for {date_part}")
                 continue
-            
+
+            total_count += 1
+
             output_file = self.dirs['cdom_output'] / f"Subset_S2_MSIL2A_{date_part}_CDOM.nc"
-            
+
             if output_file.exists():
                 logger.info(f"Output already exists: {output_file.name}")
                 success_count += 1
                 continue
-            
-            command = f'gpt "{graph_file}" -PInput="{nc_file}" -POutput="{output_file}"'
-            
-            if self.run_gpt_command(command, f"CDOM calculation {nc_file.name}"):
+
+            logger.info(f"CDOM calculation for {date_part} (source: {source_type})")
+            command = f'gpt "{graph_file}" -PInput="{source_file}" -POutput="{output_file}"'
+
+            if self.run_gpt_command(command, f"CDOM calculation {source_file.name}"):
                 success_count += 1
-        
-        logger.info(f"Step 5 completed: {success_count}/{total_count} files processed successfully")
+
+        if total_count == 0:
+            logger.info("No files found for CDOM calculation")
+            return True  # Not an error
+
+        logger.info(f"Step 6 completed: {success_count}/{total_count} files processed successfully")
         return success_count == total_count
     
-    def step_6_generate_plots(self):
+    def step_7_generate_plots(self):
         """Step 6: Generate final plots."""
         logger.info("=" * 50)
         logger.info("STEP 6: Generate Final Plots")
@@ -337,34 +509,35 @@ class WaterQualityProcessor:
         """Run the complete processing pipeline."""
         logger.info("Starting complete Sentinel-2 water quality processing pipeline")
         start_time = datetime.now()
-        
+
         steps = [
             ("Resample and Subset", self.step_1_resample_subset),
             ("Reproject to WGS84", self.step_2_reproject),
             ("Generate True Color", self.step_3_true_color),
             ("C2RCC Processing", self.step_4_c2rcc),
-            ("CDOM Calculation", self.step_5_cdom_calculation),
-            ("Generate Plots", self.step_6_generate_plots)
+            ("Mosaic (if multiple tiles)", self.step_5_mosaic),
+            ("CDOM Calculation", self.step_6_cdom_calculation),
+            ("Generate Plots", self.step_7_generate_plots)
         ]
-        
+
         results = {}
-        
+
         for step_name, step_func in steps:
             logger.info(f"Starting step: {step_name}")
             success = step_func()
             results[step_name] = success
-            
+
             if not success:
                 logger.error(f"Step failed: {step_name}")
                 logger.error("Pipeline stopped due to failure")
                 break
-            
+
             logger.info(f"Step completed successfully: {step_name}")
-        
+
         # Summary
         end_time = datetime.now()
         duration = end_time - start_time
-        
+
         logger.info("=" * 50)
         logger.info("PROCESSING SUMMARY")
         logger.info("=" * 50)
@@ -372,33 +545,33 @@ class WaterQualityProcessor:
         logger.info(f"End time: {end_time}")
         logger.info(f"Duration: {duration}")
         logger.info("")
-        
+
         for step_name, success in results.items():
             status = "SUCCESS" if success else "FAILED"
             logger.info(f"{step_name}: {status}")
-        
+
         all_success = all(results.values())
         logger.info(f"Overall status: {'SUCCESS' if all_success else 'FAILED'}")
-        
+
         return all_success
 
 def main():
     """Main function."""
     parser = argparse.ArgumentParser(description='Process Sentinel-2 water quality data')
     parser.add_argument('--config', required=True, help='Configuration file path')
-    parser.add_argument('--step', help='Run specific step only (1-6)')
-    
+    parser.add_argument('--step', help='Run specific step only (1-7)')
+
     args = parser.parse_args()
-    
+
     # Check configuration file
     config_path = Path(args.config)
     if not config_path.exists():
         logger.error(f"Configuration file not found: {config_path}")
         sys.exit(1)
-    
+
     # Initialize processor
     processor = WaterQualityProcessor(config_path)
-    
+
     # Run specific step or full pipeline
     if args.step:
         step_map = {
@@ -406,10 +579,11 @@ def main():
             '2': processor.step_2_reproject,
             '3': processor.step_3_true_color,
             '4': processor.step_4_c2rcc,
-            '5': processor.step_5_cdom_calculation,
-            '6': processor.step_6_generate_plots
+            '5': processor.step_5_mosaic,
+            '6': processor.step_6_cdom_calculation,
+            '7': processor.step_7_generate_plots
         }
-        
+
         if args.step in step_map:
             success = step_map[args.step]()
             sys.exit(0 if success else 1)

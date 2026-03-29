@@ -1,0 +1,47 @@
+<parameters>
+    <variables>
+        <variable>
+            <name>rhown_B1</name>
+            <expression>rhown_B1</expression>
+        </variable>
+        <variable>
+            <name>rhown_B2</name>
+            <expression>rhown_B2</expression>
+        </variable>
+        <variable>
+            <name>rhown_B3</name>
+            <expression>rhown_B3</expression>
+        </variable>
+        <variable>
+            <name>rhown_B4</name>
+            <expression>rhown_B4</expression>
+        </variable>
+        <variable>
+            <name>conc_tsm</name>
+            <expression>conc_tsm</expression>
+        </variable>
+        <variable>
+            <name>conc_chl</name>
+            <expression>conc_chl</expression>
+        </variable>
+    </variables>
+    <conditions/>
+    <combine>OR</combine>
+    <crs>GEOGCS[&quot;WGS84(DD)&quot;,
+      DATUM[&quot;WGS84&quot;,
+        SPHEROID[&quot;WGS84&quot;, 6378137.0, 298.257223563]],
+      PRIMEM[&quot;Greenwich&quot;, 0.0],
+      UNIT[&quot;degree&quot;, 0.017453292519943295],
+      AXIS[&quot;Geodetic longitude&quot;, EAST],
+      AXIS[&quot;Geodetic latitude&quot;, NORTH],
+      AUTHORITY[&quot;EPSG&quot;,&quot;4326&quot;]]</crs>
+    <orthorectify>false</orthorectify>
+    <elevationModelName>ACE30</elevationModelName>
+    <resampling>Nearest</resampling>
+    <westBound>130.35385746775432</westBound>
+    <northBound>-12.151268658210267</northBound>
+    <eastBound>131.0315831229534</eastBound>
+    <southBound>-12.747446836198103</southBound>
+    <pixelSizeX>1.0E-4</pixelSizeX>
+    <pixelSizeY>1.0E-4</pixelSizeY>
+</parameters>

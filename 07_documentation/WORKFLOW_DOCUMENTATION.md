@@ -34,6 +34,7 @@ Sentinel2_WQ/
 │       ├── resample_subset.xml    # Resample and subset graph
 │       ├── reproject.xml          # Reprojection parameters
 │       ├── c2rcc_param.xml        # C2RCC parameters
+│       ├── mosaic.xml             # Mosaic parameters (for multiple tiles)
 │       ├── cdom_band_math.xml     # CDOM calculation graph
 │       └── rgb_profile_s2.rgb     # RGB profile for true color
 │
@@ -43,7 +44,8 @@ Sentinel2_WQ/
 ├── 04_processed_data/             # Intermediate processed data
 │   ├── l2a_resampled/             # Resampled and subset data
 │   ├── l2a_reprojected/           # Reprojected data
-│   ├── c2rcc_output/              # C2RCC processed data
+│   ├── c2rcc_output/              # C2RCC processed data (single tiles)
+│   ├── mosaic_output/             # Mosaicked data (multiple tiles)
 │   └── cdom_output/               # CDOM calculated data
 │
 ├── 05_final_products/             # Final output products
@@ -59,6 +61,56 @@ Sentinel2_WQ/
 ├── run_workflow.bat               # Windows batch script
 └── workflow_demo.ipynb            # Jupyter notebook demo
 ```
+
+## Study Area Configuration
+
+### Setting Up Your Study Area
+
+The workflow automatically configures all SNAP processing tools based on your study area geometry. You only need to update one place:
+
+**File**: `02_config/parameters.yaml`
+
+```yaml
+study_area:
+  name: "Your Study Area Name"
+  wkt_geometry: "POLYGON ((lon1 lat1, lon2 lat2, lon3 lat3, lon4 lat4, lon1 lat1))"
+```
+
+### How It Works
+
+1. **Single Point of Configuration**: Update the `wkt_geometry` in parameters.yaml
+2. **Automatic Propagation**: The workflow automatically:
+   - Extracts bounds from your WKT polygon
+   - Updates all SNAP XML graph files
+   - Applies geometry to resampling, subsetting, and reprojection operations
+   - Maintains consistency across all processing steps
+
+### Geographic Coordinates Format
+
+The WKT geometry should be a closed polygon with coordinates in **(longitude, latitude)** order:
+
+```
+POLYGON ((lon1 lat1, lon2 lat2, lon3 lat3, lon4 lat4, lon1 lat1))
+```
+
+Example for Western Australia:
+```
+POLYGON ((115.54 -31.93, 115.79 -31.93, 115.79 -32.26, 115.54 -32.26, 115.54 -31.93))
+```
+
+### Manual Update (if needed)
+
+To manually update SNAP geometry files without running the full pipeline:
+
+```bash
+python 01_scripts/update_snap_geometry.py --config 02_config/parameters.yaml
+```
+
+This will:
+- Read the WKT geometry from parameters.yaml
+- Extract geographic bounds
+- Update all relevant SNAP XML files
+- Report which files were updated
 
 ## Technical Configuration
 
@@ -118,17 +170,65 @@ Downloads Sentinel-2 L1C data from Copernicus Data Space Ecosystem based on:
 ### Step 5: C2RCC Processing
 - Applies Case-2 Regional Coast Color atmospheric correction
 - Calculates water quality parameters (CHL, TSM)
-- Outputs NetCDF format
+- Processes each tile individually
+- Outputs NetCDF format to `c2rcc_output/`
 
-### Step 6: CDOM Calculation
+### Step 6: Mosaic Processing (Conditional)
+**Intelligent multi-tile handling:**
+- **Multiple tiles for same date**: Automatically creates mosaic
+  - Combines tiles into single seamless dataset
+  - Outputs to `mosaic_output/`
+  - Used for subsequent processing
+- **Single tile**: Skips mosaic processing
+  - Directly uses C2RCC output for water quality calculation
+  - Saves processing time and disk space
+
+### Step 7: CDOM Calculation
 - Calculates CDOM using band math on atmospherically corrected data
+- **Adapts to data source**: Automatically uses mosaic if available, otherwise C2RCC
 - Uses empirical algorithm with reflectance bands
 - Outputs NetCDF format
 
-### Step 7: Visualization
+### Step 8: Visualization
 - Generates publication-ready plots
 - Applies custom colormaps for each parameter
+- Reads from both C2RCC and mosaic outputs as needed
 - Outputs high-resolution PNG files
+
+## Multi-tile and Single-tile Handling
+
+The workflow intelligently adapts to study area coverage:
+
+### Single-tile Scenarios
+When your study area falls entirely within a single Sentinel-2 tile:
+```
+Input: 1 C2RCC file per date
+Flow: C2RCC → CDOM Calculation → Plotting
+Output:
+  - No mosaic created (saves ~30-50% disk space)
+  - Faster processing (no mosaic time required)
+  - Direct output to final products
+```
+
+### Multi-tile Scenarios
+When your study area spans multiple Sentinel-2 tiles:
+```
+Input: Multiple C2RCC files per date (e.g., 2-4 tiles)
+Flow: C2RCC → Mosaic → CDOM Calculation → Plotting
+Output:
+  - Mosaicked dataset in mosaic_output/
+  - Single seamless product for each date
+  - Consistent spatial coverage across tiles
+```
+
+### Automatic Detection
+The workflow automatically:
+1. Groups C2RCC outputs by date
+2. Counts tiles per date (determined by processing all input imagery)
+3. For single-tile dates: skips mosaic, processes directly
+4. For multi-tile dates: creates mosaic, then processes
+5. CDOM calculation adapts to available source (mosaic or c2rcc)
+6. Plotting reads from both directories as needed
 
 ## Usage Examples
 
@@ -161,11 +261,23 @@ python run_workflow.py --action plot
 # Download data
 python 01_scripts/download.py --config 02_config/parameters.yaml
 
-# Process data
+# Process data (full pipeline)
 python 01_scripts/process_pipeline.py --config 02_config/parameters.yaml
 
+# Process individual steps (use --step flag with numbers 1-7)
+python 01_scripts/process_pipeline.py --config 02_config/parameters.yaml --step 1  # Resample and Subset
+python 01_scripts/process_pipeline.py --config 02_config/parameters.yaml --step 2  # Reproject
+python 01_scripts/process_pipeline.py --config 02_config/parameters.yaml --step 3  # True Color
+python 01_scripts/process_pipeline.py --config 02_config/parameters.yaml --step 4  # C2RCC
+python 01_scripts/process_pipeline.py --config 02_config/parameters.yaml --step 5  # Mosaic (if needed)
+python 01_scripts/process_pipeline.py --config 02_config/parameters.yaml --step 6  # CDOM Calculation
+python 01_scripts/process_pipeline.py --config 02_config/parameters.yaml --step 7  # Generate Plots
+
 # Generate plots
-python 01_scripts/plotting.py --config 02_config/parameters.yaml
+python 01_scripts/plotting.py --config 02_config/parameters.yaml --parameter all  # All parameters
+python 01_scripts/plotting.py --config 02_config/parameters.yaml --parameter chl  # Chlorophyll only
+python 01_scripts/plotting.py --config 02_config/parameters.yaml --parameter tsm  # TSM only
+python 01_scripts/plotting.py --config 02_config/parameters.yaml --parameter cdom # CDOM only
 ```
 
 ## Fresh Repository Setup

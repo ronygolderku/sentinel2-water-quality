@@ -34,10 +34,11 @@ class WaterQualityPlotter:
         """Setup working directories."""
         self.dirs = {
             'c2rcc_output': self.base_dir / "04_processed_data/c2rcc_output",
+            'mosaic_output': self.base_dir / "04_processed_data/mosaic_output",
             'cdom_output': self.base_dir / "04_processed_data/cdom_output",
             'final_products': self.base_dir / "05_final_products"
         }
-        
+
         # Create output directories
         for param in ['chl', 'tsm', 'cdom']:
             output_dir = self.dirs['final_products'] / param
@@ -103,117 +104,153 @@ class WaterQualityPlotter:
         logger.info(f"Saved: {output_path}")
     
     def plot_chlorophyll(self):
-        """Generate chlorophyll-a plots."""
+        """Generate chlorophyll-a plots from C2RCC and mosaic outputs."""
         logger.info("Generating Chlorophyll-a plots")
-        
-        input_dir = self.dirs['c2rcc_output']
+
         output_dir = self.dirs['final_products'] / 'chl'
-        
         success_count = 0
-        
-        for nc_file in input_dir.glob("*.nc"):
-            try:
-                # Extract date from filename
-                formatted_date = self.extract_date_from_filename(nc_file.name)
-                output_file = output_dir / f"{formatted_date}.png"
-                
-                if output_file.exists():
-                    logger.info(f"Chlorophyll plot already exists: {output_file.name}")
+
+        # Process files from both c2rcc and mosaic outputs
+        input_dirs = []
+
+        # Add mosaic files if they exist (multiple tiles)
+        mosaic_files = list(self.dirs['mosaic_output'].glob("*.nc"))
+        if mosaic_files:
+            input_dirs.append(("mosaic", mosaic_files))
+            logger.info(f"Found {len(mosaic_files)} mosaic files")
+
+        # Add c2rcc files (single tiles)
+        c2rcc_files = list(self.dirs['c2rcc_output'].glob("*.nc"))
+        if c2rcc_files:
+            input_dirs.append(("c2rcc", c2rcc_files))
+            logger.info(f"Found {len(c2rcc_files)} C2RCC files")
+
+        if not input_dirs:
+            logger.warning("No input files found for chlorophyll plotting")
+            return success_count
+
+        for source_type, files in input_dirs:
+            for nc_file in files:
+                try:
+                    # Extract date from filename
+                    formatted_date = self.extract_date_from_filename(nc_file.name)
+                    output_file = output_dir / f"{formatted_date}.png"
+
+                    if output_file.exists():
+                        logger.info(f"Chlorophyll plot already exists: {output_file.name}")
+                        success_count += 1
+                        continue
+
+                    # Open dataset
+                    ds = xr.open_dataset(nc_file)
+
+                    # Extract chlorophyll data
+                    chl_data = ds["conc_chl"].where(ds["conc_chl"] != 0, np.nan).values
+                    lat = ds["lat"].values
+                    lon = ds["lon"].values
+
+                    # Create plot
+                    fig, ax, extent = self.create_base_plot(chl_data, lat, lon)
+
+                    # Set colormap
+                    self.chl_cmap.set_bad(color="black")
+
+                    # Plot data
+                    img = ax.imshow(
+                        chl_data,
+                        extent=extent,
+                        cmap=self.chl_cmap,
+                        transform=ccrs.PlateCarree(),
+                        origin="upper",
+                        norm=self.chl_norm
+                    )
+
+                    # Save plot
+                    self.save_plot(fig, output_file)
                     success_count += 1
-                    continue
-                
-                # Open dataset
-                ds = xr.open_dataset(nc_file)
-                
-                # Extract chlorophyll data
-                chl_data = ds["conc_chl"].where(ds["conc_chl"] != 0, np.nan).values
-                lat = ds["lat"].values
-                lon = ds["lon"].values
-                
-                # Create plot
-                fig, ax, extent = self.create_base_plot(chl_data, lat, lon)
-                
-                # Set colormap
-                self.chl_cmap.set_bad(color="black")
-                
-                # Plot data
-                img = ax.imshow(
-                    chl_data,
-                    extent=extent,
-                    cmap=self.chl_cmap,
-                    transform=ccrs.PlateCarree(),
-                    origin="upper",
-                    norm=self.chl_norm
-                )
-                
-                # Save plot
-                self.save_plot(fig, output_file)
-                success_count += 1
-                
-                ds.close()
-                
-            except Exception as e:
-                logger.error(f"Error processing {nc_file.name}: {e}")
-        
+
+                    ds.close()
+
+                except Exception as e:
+                    logger.error(f"Error processing {nc_file.name}: {e}")
+
         logger.info(f"Chlorophyll plots: {success_count} files processed")
         return success_count
     
     def plot_tsm(self):
-        """Generate TSM plots."""
+        """Generate TSM plots from C2RCC and mosaic outputs."""
         logger.info("Generating TSM plots")
-        
-        input_dir = self.dirs['c2rcc_output']
+
         output_dir = self.dirs['final_products'] / 'tsm'
-        
         success_count = 0
-        
-        for nc_file in input_dir.glob("*.nc"):
-            try:
-                # Extract date from filename
-                formatted_date = self.extract_date_from_filename(nc_file.name)
-                output_file = output_dir / f"{formatted_date}.png"
-                
-                if output_file.exists():
-                    logger.info(f"TSM plot already exists: {output_file.name}")
+
+        # Process files from both c2rcc and mosaic outputs
+        input_dirs = []
+
+        # Add mosaic files if they exist (multiple tiles)
+        mosaic_files = list(self.dirs['mosaic_output'].glob("*.nc"))
+        if mosaic_files:
+            input_dirs.append(("mosaic", mosaic_files))
+            logger.info(f"Found {len(mosaic_files)} mosaic files")
+
+        # Add c2rcc files (single tiles)
+        c2rcc_files = list(self.dirs['c2rcc_output'].glob("*.nc"))
+        if c2rcc_files:
+            input_dirs.append(("c2rcc", c2rcc_files))
+            logger.info(f"Found {len(c2rcc_files)} C2RCC files")
+
+        if not input_dirs:
+            logger.warning("No input files found for TSM plotting")
+            return success_count
+
+        for source_type, files in input_dirs:
+            for nc_file in files:
+                try:
+                    # Extract date from filename
+                    formatted_date = self.extract_date_from_filename(nc_file.name)
+                    output_file = output_dir / f"{formatted_date}.png"
+
+                    if output_file.exists():
+                        logger.info(f"TSM plot already exists: {output_file.name}")
+                        success_count += 1
+                        continue
+
+                    # Open dataset
+                    ds = xr.open_dataset(nc_file)
+
+                    # Check if TSM variable exists
+                    if "conc_tsm" not in ds.variables:
+                        logger.warning(f"Variable 'conc_tsm' not found in {nc_file.name}")
+                        continue
+
+                    # Extract TSM data
+                    tsm_data = ds["conc_tsm"].where(ds["conc_tsm"] != 0, np.nan).values
+                    lat = ds["lat"].values
+                    lon = ds["lon"].values
+
+                    # Create plot
+                    fig, ax, extent = self.create_base_plot(tsm_data, lat, lon)
+
+                    # Plot data
+                    img = ax.imshow(
+                        tsm_data,
+                        extent=extent,
+                        cmap=self.tsm_cmap,
+                        transform=ccrs.PlateCarree(),
+                        origin="upper",
+                        vmin=0,
+                        vmax=4
+                    )
+
+                    # Save plot
+                    self.save_plot(fig, output_file)
                     success_count += 1
-                    continue
-                
-                # Open dataset
-                ds = xr.open_dataset(nc_file)
-                
-                # Check if TSM variable exists
-                if "conc_tsm" not in ds.variables:
-                    logger.warning(f"Variable 'conc_tsm' not found in {nc_file.name}")
-                    continue
-                
-                # Extract TSM data
-                tsm_data = ds["conc_tsm"].where(ds["conc_tsm"] != 0, np.nan).values
-                lat = ds["lat"].values
-                lon = ds["lon"].values
-                
-                # Create plot
-                fig, ax, extent = self.create_base_plot(tsm_data, lat, lon)
-                
-                # Plot data
-                img = ax.imshow(
-                    tsm_data,
-                    extent=extent,
-                    cmap=self.tsm_cmap,
-                    transform=ccrs.PlateCarree(),
-                    origin="upper",
-                    vmin=0,
-                    vmax=4
-                )
-                
-                # Save plot
-                self.save_plot(fig, output_file)
-                success_count += 1
-                
-                ds.close()
-                
-            except Exception as e:
-                logger.error(f"Error processing {nc_file.name}: {e}")
-        
+
+                    ds.close()
+
+                except Exception as e:
+                    logger.error(f"Error processing {nc_file.name}: {e}")
+
         logger.info(f"TSM plots: {success_count} files processed")
         return success_count
     

@@ -5,9 +5,9 @@ import geopandas as gpd
 from shapely.geometry import shape
 import os
 from datetime import datetime
-copernicus_user = "ronygolderku@gmail.com" # copernicus User
-copernicus_password = "G@DVH26uGtb3BBq" # copernicus Password
-ft = "POLYGON ((115.53949386146294 -31.925260296569277, 115.78672226811288 -31.92786249897796, 115.78223830220871 -32.26641419173019, 115.53409693090781 -32.2637777945036, 115.53949386146294 -31.925260296569277))"  # WKT Representation of BBOX
+copernicus_user = "" # copernicus User
+copernicus_password = "" # copernicus Password
+ft = "POLYGON ((115.72391639490188 -31.769331237024154, 115.73494636536967 -31.769441274297993, 115.73465075115433 -31.791150798688584, 115.72361820493182 -31.791040668749186, 115.72391639490188 -31.769331237024154))"  # WKT Representation of BBOX
 data_collection = "SENTINEL-2" # Sentinel satellite
 
 # Define the start and end dates

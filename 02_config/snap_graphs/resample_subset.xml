@@ -40,7 +40,7 @@
       <tiePointGrids/>
       <region>0,0,0,0</region>
       <referenceBand/>
-      <geoRegion>POLYGON ((115.40 -31.95, 115.80 -31.95, 115.80 -32.30, 115.80 -32.30, 115.40 -31.95, 115.40 -31.95))</geoRegion>
+      <geoRegion>POLYGON ((130.35385746775432 -12.151268658210267, 131.0315831229534 -12.151268658210267, 131.0315831229534 -12.747446836198103, 130.35385746775432 -12.747446836198103, 130.35385746775432 -12.151268658210267))</geoRegion>
       <subSamplingX>1</subSamplingX>
       <subSamplingY>1</subSamplingY>
       <fullSwath>false</fullSwath>
@@ -60,7 +60,7 @@
   <applicationData id="Presentation">
     <Description/>
     <node id="Read">
-            <displayPosition x="37.0" y="134.0"/>
+      <displayPosition x="37.0" y="134.0"/>
     </node>
     <node id="Resample">
       <displayPosition x="164.0" y="133.0"/>
@@ -69,7 +69,7 @@
       <displayPosition x="298.0" y="138.0"/>
     </node>
     <node id="Write">
-            <displayPosition x="455.0" y="135.0"/>
+      <displayPosition x="455.0" y="135.0"/>
     </node>
   </applicationData>
 </graph>
