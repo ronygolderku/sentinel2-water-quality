@@ -463,6 +463,6 @@ xdg-open _build/html/index.html  # Linux
 
 ---
 
-© 2025 Md Rony Golder. All rights reserved.
+© 2026 Md Rony Golder. All rights reserved.
 
 **Happy Processing! 🛰️🌊**

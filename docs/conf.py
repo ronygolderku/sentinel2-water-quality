@@ -1,59 +1,67 @@
-# Configuration file for the Sphinx documentation builder.
+# Configuration file for Sphinx documentation builder
+# For the full list of options, see:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-# -- Project information -----------------------------------------------------
+import os
+import sys
+from datetime import datetime
+
+# Add project root to path
+sys.path.insert(0, os.path.abspath('..'))
+
+# Project information
 project = 'Sentinel-2 Water Quality Processing Toolkit'
-copyright = '2025, Md Rony Golder'
+copyright = f'{datetime.now().year}, Md Rony Golder'
 author = 'Md Rony Golder'
 release = '1.0.0'
+version = '1.0'
 
-# -- General configuration ---------------------------------------------------
+# General configuration
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
+    'sphinx_rtd_theme',
     'myst_parser',
 ]
 
-templates_path = ['_templates']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+# Source file extensions
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 
-# -- Options for HTML output -------------------------------------------------
+# Master document
+master_doc = 'index'
+
+# Theme configuration
 html_theme = 'sphinx_rtd_theme'
-html_static_path = []  # Remove static path since we don't have _static folder
-
-# -- Options for MyST parser ------------------------------------------------
-myst_enable_extensions = [
-    "colon_fence",
-    "deflist",
-    "html_admonition",
-    "html_image",
-    "replacements",
-    "smartquotes",
-    "strikethrough",
-    "substitution",
-    "tasklist",
-    "fieldlist",
-]
-
-# -- Theme options -----------------------------------------------------------
 html_theme_options = {
     'logo_only': False,
     'display_version': True,
     'prev_next_buttons_location': 'bottom',
     'style_external_links': False,
+    'vcs_pageview_mode': '',
     'style_nav_header_background': '#2980B9',
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'navigation_depth': 4,
-    'includehidden': True,
-    'titles_only': False
 }
 
-# -- Source suffix ----------------------------------------------------------
-source_suffix = {
-    '.rst': None,
-    '.md': None,
-}
+# HTML output options
+html_static_path = ['_static']
+html_logo = None
+html_title = f'{project} Documentation'
+html_favicon = None
 
-# -- Master doc --------------------------------------------------------------
-master_doc = 'index'
+# Napoleon settings (for Google/NumPy docstrings)
+napoleon_google_docstring = True
+napoleon_numpy_docstring = True
+
+# Markdown support
+myst_enable_extensions = [
+    "colon_fence",
+    "tasklist",
+]
+
+# Warnings
+suppress_warnings = [
+    'image.not_readable',
+]
