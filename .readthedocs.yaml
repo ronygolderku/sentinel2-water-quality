@@ -9,7 +9,8 @@ build:
   tools:
     python: "3.11"
   jobs:
-    pre_install: pip install --upgrade pip setuptools
+    pre_install:
+      - pip install --upgrade pip setuptools
 
 # Python dependencies for building documentation
 python:
