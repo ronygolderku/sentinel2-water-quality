@@ -3,22 +3,25 @@
 
 version: 2
 
-# Build documentation in the docs/ directory with Sphinx
+# Build documentation
 build:
   os: ubuntu-22.04
   tools:
     python: "3.11"
+  jobs:
+    pre_install: pip install --upgrade pip setuptools
 
+# Python dependencies for building documentation
 python:
-  version: 3.11
   install:
     - requirements: docs/requirements.txt
 
+# Sphinx configuration
 sphinx:
   configuration: docs/conf.py
   fail_on_warning: false
 
-# Generate PDF and ePub formats
+# Output formats
 formats:
   - pdf
   - epub
