@@ -2,6 +2,13 @@
 
 Welcome to the Sentinel-2 Water Quality Processing Toolkit! This guide provides detailed setup instructions beyond the Quick Start in the main README.
 
+**Before You Start**: If you're new to water quality remote sensing or want to understand the science behind this toolkit, we recommend reading [Scientific Background & Theory](scientific_background.md) first. It covers:
+- Why water quality monitoring matters
+- How Sentinel-2 satellites work
+- The C2RCC atmospheric correction algorithm
+- What the water quality parameters mean
+- Why single vs multi-tile processing matters
+
 ## Prerequisites
 
 Before starting, ensure you have:

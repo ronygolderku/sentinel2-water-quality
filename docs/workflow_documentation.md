@@ -4,6 +4,10 @@
 
 This document provides detailed technical information about the Sentinel-2 water quality processing workflow. For quick start instructions, see the main [README.md](../README.md).
 
+The system processes **Level-1C Sentinel-2 satellite imagery** to extract water quality parameters using the **C2RCC (Case-2 Regional Coast Colour)** atmospheric correction algorithm.
+
+**Understanding the Science?** For comprehensive background on water quality monitoring, the C2RCC algorithm, and the scientific basis for our processing steps, please refer to [Scientific Background & Theory](scientific_background.md).
+
 The system processes Sentinel-2 satellite imagery to extract water quality parameters including Chlorophyll-a (CHL), Total Suspended Matter (TSM), and Colored Dissolved Organic Matter (CDOM) using the C2RCC atmospheric correction algorithm.
 
 ## Table of Contents

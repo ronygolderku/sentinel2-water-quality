@@ -5,6 +5,7 @@
 :caption: Contents:
 
 getting_started
+scientific_background
 workflow_documentation
 troubleshooting
 snap_installation
@@ -29,9 +30,26 @@ A comprehensive, automated toolkit for processing Sentinel-2 satellite imagery t
 - **🛡️ Comprehensive Error Handling** and logging
 - **⚡ Easy Configuration** via YAML files (no XML editing needed!)
 
+## Scientific Foundation
+
+This toolkit processes **Level-1C Sentinel-2 satellite imagery** to extract essential water quality indicators:
+
+- 🔬 **Chlorophyll-a (Chl-a)**: Phytoplankton biomass & primary productivity
+- 🌊 **Total Suspended Matter (TSM)**: Water turbidity & particulate load
+- 🟫 **Colored Dissolved Organic Matter (CDOM)**: Dissolved organic compounds
+
+Using the state-of-the-art **C2RCC (Case-2 Regional Coast Colour)** atmospheric correction algorithm, specifically designed for optically complex coastal and inland waters. The system automatically handles:
+- Atmospheric correction
+- Bio-optical parameter inversion
+- Quality control and validation
+- Single/multi-tile processing with automatic mosaic generation
+
+**New to water quality remote sensing?** Start with [Scientific Background & Theory](scientific_background.md) to understand the science behind the toolkit.
+
 ## Quick Links
 
 - [Getting Started](getting_started.md)
+- [Scientific Background & Theory](scientific_background.md)
 - [Workflow Documentation](workflow_documentation.md)
 - [Troubleshooting Guide](troubleshooting.md)
 - [API Reference](api_reference.md)
